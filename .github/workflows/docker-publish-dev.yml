@@ -21,6 +21,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@main
       with:
+        ref: dev
         show-progress: false
         submodules: recursive
 
@@ -64,11 +65,3 @@ jobs:
           ghcr.io/${{ env.GHCR_REPOSITORY }}:${{ env.TAG }}
           ${{ env.DH_REPOSITORY }}:${{ env.TAG }}
         push: true
-
-    - name: Update DockerHub repository description
-      uses: peter-evans/dockerhub-description@main
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-        repository: ${{ env.DH_REPOSITORY }}
-        short-description: ${{ github.event.repository.description }}
