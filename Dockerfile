@@ -1,10 +1,35 @@
-FROM node:lts
+# Use an Alpine-based Node.js image
+FROM node:lts-alpine
 
-WORKDIR /usr/src/app
+# Set environment variables for the timezone and application
+ENV TZ=America/Chicago \
+    ASF_PROTOCOL=http \
+    ASF_HOST=localhost \
+    ASF_PORT=1242 \
+    ASF_PASS=secret \
+    ASF_COMMAND_PREFIX=! \
+    ASF_BOTS=asf \
+    ASF_CLAIM_INTERVAL=6 \
+    WEBHOOK_URL=none \
+    WEBHOOK_ENABLEDTYPES=error;warn;success \
+    WEBHOOK_SHOWACCOUNTSTATUS=true
 
-COPY package*.json ./
-RUN npm install
+# Install dependencies and set up app directory
+RUN apk add --no-cache tzdata && \
+    mkdir -p /app/storage && \
+    chown -R node:node /app
 
-COPY . .
+# Set working directory and copy package.json for dependency installation
+WORKDIR /app
+COPY package.json ./
 
+# Install dependencies and clear npm cache
+RUN npm install --omit=dev && \
+    npm cache clean --force
+
+# Copy application source code
+COPY --chown=node:node ./index.js ./
+
+# Use non-root user and set default command
+USER node
 CMD ["node", "index.js"]
