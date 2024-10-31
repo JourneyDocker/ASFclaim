@@ -13,14 +13,14 @@ Use the optional webhook integration to receive claim notifications on Discord.
 ### Notification Types
 
 #### **Successfully Claimed Game**
-  ![Success](resources/readme/app_game_status.png)
+  ![Success](https://raw.githubusercontent.com/JourneyDocker/ASFclaim/main/resources/readme/app_game_status.png)
 
 #### **Claimed Package Containing a DLC (with or without status visibility)**
-  ![DLC Status](resources/readme/sub_dlc_status.png)
-  ![DLC No Status](resources/readme/sub_dlc_no-status.png)
+  ![DLC Status](https://raw.githubusercontent.com/JourneyDocker/ASFclaim/main/resources/readme/sub_dlc_status.png)
+  ![DLC No Status](https://raw.githubusercontent.com/JourneyDocker/ASFclaim/main/resources/readme/sub_dlc_no-status.png)
 
 #### **Claimed Game Package with Multiple Results and Visible Botnames**
-  ![Multiple Results](resources/readme/app_game_status-long.png)
+  ![Multiple Results](https://raw.githubusercontent.com/JourneyDocker/ASFclaim/main/resources/readme/app_game_status-long.png)
 
 When `WEBHOOK_SHOWACCOUNTSTATUS` is set to `false`, bot names and statuses remain hidden—ideal for public channels.
 
@@ -97,11 +97,11 @@ services:
 
 | ENV                         | Description                                  | Info                                                   | Default Value                        | Required |
 |-----------------------------|----------------------------------------------|--------------------------------------------------------|--------------------------------------|----------|
-| `TZ`                        | Your timezone                                | Timezone identifier (e.g., `Europe/Amsterdam`)         | `America/Chicago`                   | No       |
+| `TZ`                        | Your timezone                                | Timezone identifier (e.g., `Europe/Amsterdam`)         | `America/Chicago`                    | No       |
 | `ASF_PROTOCOL`              | ASF IPC Transfer protocol                    | Options: `http` or `https`                             | `http`                               | No       |
 | `ASF_HOST`                  | ASF IPC Hostname or IP                       | Hostname or IP address                                 | `localhost`                          | No       |
 | `ASF_PORT`                  | ASF IPC Port                                 | Port number for IPC                                    | `1242`                               | No       |
-| `ASF_PASS`                  | ASF IPC Password                             | Plaintext password for ASF                             | `secret`                             | No       |
+| `ASF_PASS`                  | ASF IPC Password                             | Plaintext password for ASF                             | `""`                                 | No       |
 | `ASF_COMMAND_PREFIX`        | Command prefix for ASF                       | Prefix used before commands                            | `!`                                  | No       |
 | `ASF_BOTS`                  | List of ASF bot names                        | Comma-separated bot names                              | `asf`                                | No       |
 | `ASF_CLAIM_INTERVAL`        | Hours to wait for execution                  | Interval in hours between checks                       | `6`                                  | No       |
