@@ -51,18 +51,19 @@ node .
 #### Quick Start with Docker
 
 ```sh
-docker run --name asfclaim \
+docker run -d \
+  --name asfclaim \
   -e TZ=America/Chicago \
   -e ASF_PROTOCOL=http \
   -e ASF_HOST=localhost \
   -e ASF_PORT=1242 \
-  -e ASF_PASS=secret \
-  -e ASF_COMMAND_PREFIX=! \
+  -e ASF_COMMAND_PREFIX="!" \
   -e ASF_BOTS=asf \
   -e ASF_CLAIM_INTERVAL=6 \
   -e WEBHOOK_URL=none \
-  -e WEBHOOK_ENABLEDTYPES=error;warn;success \
+  -e WEBHOOK_ENABLEDTYPES="error;warn;success" \
   -e WEBHOOK_SHOWACCOUNTSTATUS=true \
+  -v data:/app/storage/ \
   journeyover/asfclaim:latest
 ```
 
@@ -82,7 +83,6 @@ services:
             - ASF_PROTOCOL=http
             - ASF_HOST=localhost
             - ASF_PORT=1242
-            - ASF_PASS=secret
             - ASF_COMMAND_PREFIX="!"
             - ASF_BOTS=asf
             - ASF_CLAIM_INTERVAL=6
@@ -101,7 +101,7 @@ services:
 | `ASF_PROTOCOL`              | ASF IPC Transfer protocol                    | Options: `http` or `https`                             | `http`                               | No       |
 | `ASF_HOST`                  | ASF IPC Hostname or IP                       | Hostname or IP address                                 | `localhost`                          | No       |
 | `ASF_PORT`                  | ASF IPC Port                                 | Port number for IPC                                    | `1242`                               | No       |
-| `ASF_PASS`                  | ASF IPC Password                             | Plaintext password for ASF                             | `""`                                 | No       |
+| `ASF_PASS`                  | ASF IPC Password                             | Plaintext password for ASF                             | ` `                                  | No       |
 | `ASF_COMMAND_PREFIX`        | Command prefix for ASF                       | Prefix used before commands                            | `!`                                  | No       |
 | `ASF_BOTS`                  | List of ASF bot names                        | Comma-separated bot names                              | `asf`                                | No       |
 | `ASF_CLAIM_INTERVAL`        | Hours to wait for execution                  | Interval in hours between checks                       | `6`                                  | No       |

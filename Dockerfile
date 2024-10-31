@@ -6,7 +6,6 @@ ENV TZ=America/Chicago \
     ASF_PROTOCOL=http \
     ASF_HOST=localhost \
     ASF_PORT=1242 \
-    ASF_PASS=secret \
     ASF_COMMAND_PREFIX=! \
     ASF_BOTS=asf \
     ASF_CLAIM_INTERVAL=6 \
