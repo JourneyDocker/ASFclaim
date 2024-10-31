@@ -97,7 +97,7 @@ services:
 
 | ENV                         | Description                                  | Info                                                   | Default Value                        | Required |
 |-----------------------------|----------------------------------------------|--------------------------------------------------------|--------------------------------------|----------|
-| `TZ`                        | Your timezone                                | Timezone identifier (e.g., `Europe/Amsterdam`)         | `Europe/Amsterdam`                   | No       |
+| `TZ`                        | Your timezone                                | Timezone identifier (e.g., `Europe/Amsterdam`)         | `America/Chicago`                   | No       |
 | `ASF_PROTOCOL`              | ASF IPC Transfer protocol                    | Options: `http` or `https`                             | `http`                               | No       |
 | `ASF_HOST`                  | ASF IPC Hostname or IP                       | Hostname or IP address                                 | `localhost`                          | No       |
 | `ASF_PORT`                  | ASF IPC Port                                 | Port number for IPC                                    | `1242`                               | No       |
