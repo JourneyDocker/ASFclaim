@@ -48,6 +48,43 @@ node .
 
 ### Docker Installation
 
+You can use pre-built Docker images to run ASFclaim:
+
+**Pull the Docker Image:**
+
+  You can choose from two Docker image repositories:
+
+  - From Docker Hub:
+
+    ```sh
+    journeyover/asfclaim:latest
+    ```
+
+  - From GitHub Container Registry:
+
+    ```sh
+    ghcr.io/journeydocker/asfclaim:latest
+    ```
+
+### Docker Image Tags
+
+  The `ASFclaim` Docker image is available in three primary tag formats, each suited to different use cases:
+
+  - **`main` (Continuous Development)**
+    - **Description**: The `main` tag is automatically updated to reflect the latest commit on the main branch in GitHub.
+    - **Usage Consideration**: This tag is not recommended for production use, as it changes frequently and may include untested or unstable updates. Use `main` only if you're contributing to development or need access to the latest features and fixes.
+    - **Frequency**: Updated with each new commit to the main branch, making this a rapidly evolving image.
+
+    > **Note**: Pulling the `main` tag may introduce breaking changes or instability, as it represents ongoing development work.
+
+  - **`latest` (Latest Stable Release)**
+    - **Description**: This tag points to the most recent stable release of `ASFclaim`. Unlike `main`, the `latest` tag is only updated with stable, fully-tested versions.
+    - **Usage Recommendation**: Use the `latest` tag if you want the most current stable build without specifying a particular version. Ideal for production environments where stability is critical.
+
+  - **`A.B.C.D` (Versioned Release)**
+    - **Description**: Versioned tags, such as `A.B.C.D`, are frozen at a specific release version and will not receive updates after publication.
+    - **Usage Recommendation**: Use versioned tags when you need consistency and want to avoid updates that might alter functionality. These tags are ideal for production environments requiring fixed versions.
+
 #### Quick Start with Docker
 
 ```sh
@@ -95,20 +132,20 @@ services:
 
 ## Environment Variables
 
-| ENV                         | Description                                  | Info                                                   | Default Value                        | Required |
-|-----------------------------|----------------------------------------------|--------------------------------------------------------|--------------------------------------|----------|
-| `TZ`                        | Your timezone                                | Timezone identifier (e.g., `Europe/Amsterdam`)         | `America/Chicago`                    | No       |
-| `ASF_PROTOCOL`              | ASF IPC Transfer protocol                    | Options: `http` or `https`                             | `http`                               | No       |
-| `ASF_HOST`                  | ASF IPC Hostname or IP                       | Hostname or IP address                                 | `localhost`                          | No       |
-| `ASF_PORT`                  | ASF IPC Port                                 | Port number for IPC                                    | `1242`                               | No       |
-| `ASF_PASS`                  | ASF IPC Password                             | Plaintext password for ASF                             | ` `                                  | No       |
-| `ASF_COMMAND_PREFIX`        | Command prefix for ASF                       | Prefix used before commands                            | `!`                                  | No       |
-| `ASF_BOTS`                  | List of ASF bot names                        | Comma-separated bot names                              | `asf`                                | No       |
-| `ASF_CLAIM_INTERVAL`        | Hours to wait for execution                  | Interval in hours between checks                       | `6`                                  | No       |
-| `GIST_ID`                   | Gist ID containing Steam codes               | GitHub Gist ID for fetching codes                      | `e8c5cf365d816f2640242bf01d8d3675`   | No       |
-| `WEBHOOK_URL`               | Discord Webhook URL                          | URL for Discord webhook or `none` to disable           | `none`                               | No       |
-| `WEBHOOK_ENABLEDTYPES`      | Displayed notification types in Discord chat | Semicolon-separated types (e.g., `error;warn;success`) | `error;warn;success`                 | No       |
-| `WEBHOOK_SHOWACCOUNTSTATUS` | Show result from ASF                         | Options: `true` or `false`                             | `true`                               | No       |
+| ENV                         | Description                                  | Info                                                   | Default Value                      | Required |
+| --------------------------- | -------------------------------------------- | ------------------------------------------------------ | ---------------------------------- | -------- |
+| `TZ`                        | Your timezone                                | Timezone identifier (e.g., `Europe/Amsterdam`)         | `America/Chicago`                  | No       |
+| `ASF_PROTOCOL`              | ASF IPC Transfer protocol                    | Options: `http` or `https`                             | `http`                             | No       |
+| `ASF_HOST`                  | ASF IPC Hostname or IP                       | Hostname or IP address                                 | `localhost`                        | No       |
+| `ASF_PORT`                  | ASF IPC Port                                 | Port number for IPC                                    | `1242`                             | No       |
+| `ASF_PASS`                  | ASF IPC Password                             | Plaintext password for ASF                             | ` `                                | No       |
+| `ASF_COMMAND_PREFIX`        | Command prefix for ASF                       | Prefix used before commands                            | `!`                                | No       |
+| `ASF_BOTS`                  | List of ASF bot names                        | Comma-separated bot names                              | `asf`                              | No       |
+| `ASF_CLAIM_INTERVAL`        | Hours to wait for execution                  | Interval in hours between checks                       | `6`                                | No       |
+| `GIST_ID`                   | Gist ID containing Steam codes               | GitHub Gist ID for fetching codes                      | `e8c5cf365d816f2640242bf01d8d3675` | No       |
+| `WEBHOOK_URL`               | Discord Webhook URL                          | URL for Discord webhook or `none` to disable           | `none`                             | No       |
+| `WEBHOOK_ENABLEDTYPES`      | Displayed notification types in Discord chat | Semicolon-separated types (e.g., `error;warn;success`) | `error;warn;success`               | No       |
+| `WEBHOOK_SHOWACCOUNTSTATUS` | Show result from ASF                         | Options: `true` or `false`                             | `true`                             | No       |
 
 ---
 

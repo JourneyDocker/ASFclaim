@@ -1,10 +1,34 @@
-/.git
-/.github
-/.idea
-/.vscode
-./resources/readme/*
+# Directories to ignore
+.git/
+.github/
+.idea/
+.vscode/
+node_modules/
+resources/
 
+# Ignore common archive and executable files
+*.exe
+*.zip
+*.tar.gz
+*.gz
+*.tgz
+*.rar
+*.7z
+*.jar
+
+# Temporary or lock files
+*.tmp
+pnpm-lock.yaml
+bun.lockb
+package-lock.json
+
+# Ignore configuration and script files
 .gitignore
+.env.template
+.env
 README.md
 LICENSE
+
+# Docker-specific files
 Dockerfile
+docker-compose.yml
