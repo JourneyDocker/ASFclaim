@@ -13,45 +13,45 @@ const args = {
   pass: process.env.ASF_PASS ? process.env.ASF_PASS : "",
   prefix: process.env.ASF_COMMAND_PREFIX ? process.env.ASF_COMMAND_PREFIX : "!",
   bots: process.env.ASF_BOTS ? process.env.ASF_BOTS : "asf",
-  interval: process.env.ASF_CLAIM_INTERVAL ? process.env.ASF_CLAIM_INTERVAL : "6",
+  interval: process.env.ASF_CLAIM_INTERVAL ? process.env.ASF_CLAIM_INTERVAL : "3",
   gistId: process.env.GIST_ID ? process.env.GIST_ID : "e8c5cf365d816f2640242bf01d8d3675",
   webhookUrl: process.env.WEBHOOK_URL ? process.env.WEBHOOK_URL : "none",
   hookEnabledTypesStr: process.env.WEBHOOK_ENABLEDTYPES ? process.env.WEBHOOK_ENABLEDTYPES : "error;warn;success",
   hookShowAccountStatus: process.env.WEBHOOK_SHOWACCOUNTSTATUS ? process.env.WEBHOOK_SHOWACCOUNTSTATUS : "true"
-}
+};
 
 console.log("target = " + args.protocol + "://" + args.host + ":" + args.port);
 
 let storagePath = "./storage/";
-let lastLengthPath = storagePath + "lastlength";
+let processedLicensesPath = storagePath + "processedLicenses";
 
-if (args.webhookUrl && args.webhookUrl != "none") {
+mkdirSync(storagePath, { recursive: true });
+
+// Load processed licenses or initialize an empty array
+let processedLicenses = [];
+try {
+  processedLicenses = JSON.parse(readFileSync(processedLicensesPath, "utf8"));
+} catch (err) {
+  if (err.code === "ENOENT") {
+    processedLicenses = [];
+    writeFileSync(processedLicensesPath, JSON.stringify(processedLicenses));
+  } else {
+    console.error("Error loading processed licenses:", err);
+    process.exit(1);
+  }
+}
+
+// Function to save processed licenses to file
+function saveProcessedLicenses() {
+  writeFileSync(processedLicensesPath, JSON.stringify(processedLicenses, null, 2));
+}
+
+if (args.webhookUrl && args.webhookUrl !== "none") {
   var hookEnabledTypesArr = args.hookEnabledTypesStr.split(";");
   await consoleAndWebhookAsync("info", "Discord hook enabled! With types: " + String(hookEnabledTypesArr));
 }
 
 await consoleAndWebhookAsync("info", "ASFClaim started!");
-
-mkdirSync(storagePath, { recursive: true });
-
-try {
-  var lastLength = readFileSync(lastLengthPath, "utf8");
-  if (!lastLength) {
-    lastLength = 0;
-  } else {
-    lastLength = Number(lastLength);
-  }
-} catch (err) {
-  if (err.code == "ENOENT") {
-    lastLength = 0;
-    writeFileSync(lastLengthPath, String(lastLength));
-  } else {
-    await consoleAndWebhookAsync("error", "Error with lastlength: ", err);
-    process.exit(1);
-  }
-}
-
-await consoleAndWebhookAsync("info", "Execution interval: every " + args.interval + " Hour/s.");
 
 await checkConnection();
 
@@ -59,30 +59,38 @@ await checkGame();
 setInterval(checkGame, Number(args.interval) * 60 * 60 * 1000); // Runs every %args.interval% hours
 
 async function checkGame() {
+  // Log message before the process
   await consoleAndWebhookAsync("info", "Checking for new packages...");
+
+  // Get the current time and add the interval to it
+  let currentTime = new Date();
+  let nextRunTime = new Date(currentTime.getTime() + (Number(args.interval) * 60 * 60 * 1000));
+
+  // Format next run time in 12-hour format
+  let nextRunFormatted = nextRunTime.toLocaleString('en-US', {
+    hour: '2-digit', minute: '2-digit', hour12: true, month: 'short', day: 'numeric', year: 'numeric'
+  });
+
   await octokit.gists.get({ gist_id: args.gistId }).then(async gist => {
-    let codes = gist.data.files['Steam Codes'].content.split("\n");
+    let codes = gist.data.files["Steam Codes"].content.split("\n").map(code => code.trim()).filter(code => code);
 
-    var lastCodesIndex = codes.length;
+    // Filter out already processed licenses
+    let newCodes = codes.filter(code => !processedLicenses.includes(code));
 
-    if (lastLength < lastCodesIndex) {
-      if ((lastLength + 40) < lastCodesIndex) {
-        await consoleAndWebhookAsync("warn", "Only runs on the last 40 games");
-        lastLength = lastCodesIndex - 40;
-      }
+    if (newCodes.length > 0) {
+      // Reverse the newCodes array so we start processing from the bottom
+      newCodes.reverse();
 
-      for (lastLength; lastLength < lastCodesIndex; lastLength++) {
-        let currentPack = codes[lastLength];
+      // Process the next batch of licenses (e.g., 40 at a time)
+      let batch = newCodes.slice(0, 40);
+
+      for (let currentPack of batch) {
         let asfcommand = args.prefix + "addlicense " + args.bots + " " + currentPack;
 
         let command = { Command: asfcommand };
         sleep(2);
 
-        // Prepare headers with optional authentication
-        let headers = {
-          "Content-Type": "application/json"
-        };
-
+        let headers = { "Content-Type": "application/json" };
         if (args.pass && args.pass.length > 0) {
           headers.Authentication = args.pass;
         }
@@ -95,34 +103,40 @@ async function checkGame() {
           .then(async res => res.json())
           .then(async body => {
             if (body.Success) {
-              console.log("Success: " + asfcommand);
-              console.debug(body);
-              writeFileSync(lastLengthPath, String(Number(lastLength) + 1));
-              if (args.hookShowAccountStatus == "true") {
-                await sendHookAsync("success", "Found a new free package!", currentPack, parseASFResult(body.Result));
+              console.log(`Success: License Added`);
+              console.log(`Command: !addlicense ${args.bots} ${currentPack}`);
+              console.log(`Result: ${body.Result.trim()}`);
+              console.log(`Message: ${body.Message}`);
+              console.log(`Success: ✅`);
+              console.log(`----------------------------------`);
+              processedLicenses.push(currentPack); // Add to processed list
+              saveProcessedLicenses(); // Save to file
+              if (args.hookShowAccountStatus === "true") {
+                await sendHookAsync("success", "Processed a new package!", currentPack, parseASFResult(body.Result));
               } else {
-                await sendHookAsync("success", "Found a new free package!", currentPack);
+              await sendHookAsync("success", "Processed a new package!", currentPack);
               }
             } else {
-              console.error("Error: ");
-              console.error(body);
-              await sendHookAsync("error", "Got none-success result from ASF, check the logs for more information."); // JSON result but not successful
-              console.error("Statuscode: " + body.Result.StatusCode + " | Got none-success result from ASF!");
+              console.error("Error: ", body);
+              await sendHookAsync("error", "Got non-success result from ASF, check the logs for more information.");
+              console.error("Statuscode: " + body.Result.StatusCode + " | Got non-success result from ASF!");
               process.exit(1);
             }
           })
           .catch(async err => {
-            console.error(`error running '${asfcommand}':`);
-            await sendHookAsync("error", "An error occurred while connecting to ASF, check the logs for more information."); // No connection or no JSON result
+            console.error(`Error running '${asfcommand}':`);
+            await sendHookAsync("error", "An error occurred while connecting to ASF, check the logs for more information.");
             console.log("error", err);
             process.exit(1);
-          })
+          });
       }
     } else {
-      await consoleAndWebhookAsync("info", "Found: " + lastCodesIndex + " and has: " + lastLength);
+      await consoleAndWebhookAsync("info", "No new packages found.");
     }
   });
-  await consoleAndWebhookAsync("info", "Wait for next execution...");
+
+  // Log the next interval time after the process
+  await consoleAndWebhookAsync("info", `Next run scheduled for: ${nextRunFormatted}`);
 }
 
 async function checkConnection() {
@@ -133,18 +147,14 @@ async function checkConnection() {
 
   while (true) {
     if (_i > _r) {
-      console.error("Cant connect to ASF!");
+      console.error("Can't connect to ASF!");
       process.exit(1);
     }
 
-        // Prepare headers with optional authentication
-        let headers = {
-          "Content-Type": "application/json"
-        };
-
-        if (args.pass && args.pass.length > 0) {
-          headers.Authentication = args.pass;
-        }
+    let headers = { "Content-Type": "application/json" };
+    if (args.pass && args.pass.length > 0) {
+      headers.Authentication = args.pass;
+    }
 
     let asfcommand = args.prefix + "stats";
     let command = { Command: asfcommand };
@@ -156,8 +166,6 @@ async function checkConnection() {
       .then(async res => res.json())
       .then(async body => {
         if (body.Success) {
-          //console.log("Success: " + asfcommand);
-          //console.debug(body);
           success = true;
         } else {
           console.error("Error: ");
@@ -166,7 +174,7 @@ async function checkConnection() {
         }
       })
       .catch(async err => {
-        console.error(`error running '${asfcommand}':`);
+        console.error(`Error running '${asfcommand}':`);
         console.error(err);
         success = false;
       });
@@ -191,7 +199,7 @@ async function consoleAndWebhookAsync(type, msg, pack) {
       break;
     case "info":
     default:
-      console.log(msg)
+      console.log(msg);
       break;
   }
   await sendHookAsync(type, msg, pack);
