@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { readFileSync, writeFileSync, mkdirSync } from "fs";
+import { readFileSync, writeFileSync, mkdirSync, unlinkSync } from "fs";
 import { Octokit } from "@octokit/rest";
 import * as dotenv from "dotenv";
 const octokit = new Octokit();
@@ -24,6 +24,7 @@ console.log("target = " + args.protocol + "://" + args.host + ":" + args.port);
 
 let storagePath = "./storage/";
 let processedLicensesPath = storagePath + "processedLicenses";
+let lastLengthPath = storagePath + "lastlength";
 
 mkdirSync(storagePath, { recursive: true });
 
@@ -39,6 +40,27 @@ try {
     console.error("Error loading processed licenses:", err);
     process.exit(1);
   }
+}
+
+// Perform migration only if the lastlength file exists and is valid
+try {
+  const lastLength = parseInt(readFileSync(lastLengthPath, "utf8").trim(), 10);
+  if (!isNaN(lastLength)) {
+    await octokit.gists.get({ gist_id: args.gistId }).then(async (gist) => {
+      let codes = gist.data.files["Steam Codes"].content
+        .split("\n")
+        .map((code) => code.trim())
+        .filter((code) => code);
+
+      let newProcessed = codes.slice(0, lastLength);
+      processedLicenses = [...new Set([...processedLicenses, ...newProcessed])];
+      saveProcessedLicenses();
+    });
+
+    unlinkSync(lastLengthPath);
+  }
+} catch {
+  // Silently skip the migration if `lastlength` doesn't exist or is invalid
 }
 
 // Function to save processed licenses to file
@@ -114,7 +136,7 @@ async function checkGame() {
               if (args.hookShowAccountStatus === "true") {
                 await sendHookAsync("success", "Processed a new package!", currentPack, parseASFResult(body.Result));
               } else {
-              await sendHookAsync("success", "Processed a new package!", currentPack);
+                await sendHookAsync("success", "Processed a new package!", currentPack);
               }
             } else {
               console.error("Error: ", body);
