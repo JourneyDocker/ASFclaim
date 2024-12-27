@@ -1,10 +1,11 @@
-# Directories to ignore
+# Development tool and environment configuration
 .git/
 .github/
 .idea/
 .vscode/
 node_modules/
 resources/
+renovate.json
 
 # Ignore common archive and executable files
 *.exe
