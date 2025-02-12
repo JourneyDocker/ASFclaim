@@ -125,18 +125,30 @@ async function checkGame() {
           .then(async res => res.json())
           .then(async body => {
             if (body.Success) {
-              console.log(`Success: License Added`);
-              console.log(`Command: !addlicense ${args.bots} ${currentPack}`);
-              console.log(`Result: ${body.Result.trim()}`);
-              console.log(`Message: ${body.Message}`);
-              console.log(`Success: ✅`);
-              console.log(`----------------------------------`);
-              processedLicenses.push(currentPack); // Add to processed list
-              saveProcessedLicenses(); // Save to file
-              if (args.hookShowAccountStatus === "true") {
-                await sendHookAsync("success", "Processed a new package!", currentPack, parseASFResult(body.Result));
+              const asfResultObj = parseASFResult(body.Result);
+              const hasRateLimit = Object.values(asfResultObj).some(result => result.status.includes('RateLimitExceeded'));
+
+              if (hasRateLimit) {
+                console.error("Rate limit exceeded, not marking as processed.");
+                console.log(`Command: !addlicense ${args.bots} ${currentPack}`);
+                console.log(`Result: ${body.Result.trim()}`);
+                console.log(`Message: ${body.Message}`);
+                console.log(`----------------------------------`);
+                await sendHookAsync("error", "Rate limit exceeded while processing package. Will retry in next run.", currentPack, asfResultObj);
               } else {
-                await sendHookAsync("success", "Processed a new package!", currentPack);
+                console.log(`Success: License Added`);
+                console.log(`Command: !addlicense ${args.bots} ${currentPack}`);
+                console.log(`Result: ${body.Result.trim()}`);
+                console.log(`Message: ${body.Message}`);
+                console.log(`Success: ✅`);
+                console.log(`----------------------------------`);
+                processedLicenses.push(currentPack); // Add to processed list
+                saveProcessedLicenses(); // Save to file
+                if (args.hookShowAccountStatus === "true") {
+                  await sendHookAsync("success", "Processed a new package!", currentPack, asfResultObj);
+                } else {
+                  await sendHookAsync("success", "Processed a new package!", currentPack);
+                }
               }
             } else {
               console.error("Error: ", body);
@@ -371,7 +383,7 @@ async function sendHookAsync(type, msg, pack, asfResultObj) {
 
 async function parseAppMetaAsync(appId) {
   return await fetch("https://store.steampowered.com/api/appdetails?appids=" + appId, {
-    method: "post",
+    method: "get",
     headers: {
       "Content-Type": "application/json"
     }
@@ -396,7 +408,7 @@ async function parseAppMetaAsync(appId) {
 
 async function parseSubApps(subId) {
   var apps = await fetch("https://store.steampowered.com/api/packagedetails?packageids=" + subId, {
-    method: "post",
+    method: "get",
     headers: {
       "Content-Type": "application/json"
     }
