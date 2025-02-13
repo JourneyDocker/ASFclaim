@@ -129,19 +129,19 @@ async function checkGame() {
               const hasRateLimit = Object.values(asfResultObj).some(result => result.status.includes('RateLimitExceeded'));
 
               if (hasRateLimit) {
+                console.log(`----------------------------------`);
                 console.error("Rate limit exceeded, not marking as processed.");
                 console.log(`Command: !addlicense ${args.bots} ${currentPack}`);
                 console.log(`Result: ${body.Result.trim()}`);
                 console.log(`Message: ${body.Message}`);
-                console.log(`----------------------------------`);
                 await sendHookAsync("error", "Rate limit exceeded while processing package. Will retry in next run.", currentPack, asfResultObj);
               } else {
+                console.log(`----------------------------------`);
                 console.log(`Success: License Added`);
                 console.log(`Command: !addlicense ${args.bots} ${currentPack}`);
                 console.log(`Result: ${body.Result.trim()}`);
                 console.log(`Message: ${body.Message}`);
                 console.log(`Success: ✅`);
-                console.log(`----------------------------------`);
                 processedLicenses.push(currentPack); // Add to processed list
                 saveProcessedLicenses(); // Save to file
                 if (args.hookShowAccountStatus === "true") {
