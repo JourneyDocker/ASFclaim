@@ -1,5 +1,5 @@
-# Use an Alpine-based Node.js image
-FROM node:lts-alpine
+# Use an Alpine-based bun image
+FROM oven/bun:1.2.4-alpine
 
 # Set environment variables for the timezone and application
 ENV TZ=America/Chicago \
@@ -16,19 +16,18 @@ ENV TZ=America/Chicago \
 # Install dependencies and set up app directory
 RUN apk add --no-cache tzdata && \
     mkdir -p /app/storage && \
-    chown -R node:node /app
+    chown -R bun:bun /app
 
 # Set working directory and copy package.json for dependency installation
 WORKDIR /app
 COPY package.json ./
 
-# Install dependencies and clear npm cache
-RUN npm install --omit=dev && \
-    npm cache clean --force
+# Install dependencies
+RUN bun install
 
 # Copy application source code
-COPY --chown=node:node ./index.js ./
+COPY --chown=bun:bun ./index.js ./
 
 # Use non-root user and set default command
-USER node
-CMD ["node", "index.js"]
+USER bun
+CMD ["bun", "index.js"]

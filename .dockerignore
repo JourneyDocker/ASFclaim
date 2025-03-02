@@ -3,7 +3,6 @@
 .github/
 .idea/
 .vscode/
-node_modules/
 resources/
 renovate.json
 
@@ -19,9 +18,6 @@ renovate.json
 
 # Temporary or lock files
 *.tmp
-pnpm-lock.yaml
-bun.lockb
-package-lock.json
 
 # Ignore configuration and script files
 .gitignore

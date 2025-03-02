@@ -6,6 +6,7 @@ storage/
 *.tmp
 pnpm-lock.yaml
 bun.lockb
+bun.lock
 package-lock.json
 
 # Ignore configuration files

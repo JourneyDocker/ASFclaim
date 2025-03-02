@@ -1,9 +1,11 @@
-import fetch from "node-fetch";
 import { readFileSync, writeFileSync, mkdirSync, unlinkSync } from "fs";
 import { Octokit } from "@octokit/rest";
-import * as dotenv from "dotenv";
-const octokit = new Octokit();
-dotenv.config();
+import pkg from './package.json' assert { type: 'json' };
+
+// Initialize Octokit with user-agent
+const octokit = new Octokit({
+  userAgent: `ASFClaim/${pkg.version}`
+});
 
 // Load environment variables or use default values
 const args = {
