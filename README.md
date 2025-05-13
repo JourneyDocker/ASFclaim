@@ -1,6 +1,6 @@
 # ASFclaim
 
-[DockerHub Repository](https://hub.docker.com/r/journeyover/asfclaim) | Forked from [C4illin/ASFclaim](https://github.com/C4illin/ASFclaim)
+[DockerHub Repository](https://hub.docker.com/r/journeyover/asfclaim) | Forked from [C4illin/ASFclaim](https://github.com/C4illin/ASFclaim) | Credits to [@Mega349](https://gitlab.com/Mega349) for the original discord integration code.
 
 ASFclaim is a tool designed to automatically claim new free packages on [Steam](https://store.steampowered.com/) when available, working in conjunction with [ArchiSteamFarm](https://github.com/JustArchiNET/ArchiSteamFarm) (ASF) with IPC enabled.
 
@@ -17,7 +17,7 @@ ASFclaim is a tool designed to automatically claim new free packages on [Steam](
 
 ---
 
-## Optional: Discord Webhook Integration | Credits to @Mega349 for the original integration code.
+## Optional: Discord Webhook Integration
 
 Use the optional webhook integration to receive claim notifications on Discord.
 
