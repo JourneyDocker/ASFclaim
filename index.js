@@ -289,7 +289,7 @@ async function sendHookAsync(type, msg, pack, asfResultObj) {
 
         // Fill metadata
         var metaData = {
-          imageUrl: "https://via.placeholder.com/460x215.jpg?text=Cant+load+image",
+          imageUrl: "https://placehold.co/460x215.jpg?text=Cant+load+image",
           name: "Cant load name",
           type: "Cant load type",
           appId: (license.type == "app") ? license.id : null,

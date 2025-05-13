@@ -17,7 +17,7 @@ ASFclaim is a tool designed to automatically claim new free packages on [Steam](
 
 ---
 
-## Optional: Discord Webhook Integration
+## Optional: Discord Webhook Integration | Credits to @Mega349 for the original integration code.
 
 Use the optional webhook integration to receive claim notifications on Discord.
 
@@ -164,6 +164,6 @@ services:
 ## External Resources
 
 - Webhook Bot Icon: [ASF GitHub](https://raw.githubusercontent.com/JustArchiNET/ArchiSteamFarm/main/resources/ASF_512x512.png)
-- Webhook Placeholder Image: [placeholder.com](https://via.placeholder.com/460x215.jpg?text=Cant+load+image)
+- Webhook Placeholder image: [placehold.co](https://placehold.co/460x215.jpg?text=Cant+load+image)
 - Claimable Package List: [GitHub: C4illin's Gist](https://gist.github.com/C4illin/e8c5cf365d816f2640242bf01d8d3675) | [Github: JourneyOver's Gist](https://gist.github.com/JourneyOver/590fefa34af75a961a85ff392ebc0932)
 - Steam API
