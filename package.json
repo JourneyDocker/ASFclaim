@@ -11,6 +11,6 @@
   "author": "Journey Over (Origin: Emrik Oestling)",
   "license": "ISC",
   "dependencies": {
-    "@octokit/rest": "^21.1.1"
+    "@octokit/rest": "^22.0.0"
   }
 }
