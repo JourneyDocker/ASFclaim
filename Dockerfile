@@ -1,5 +1,5 @@
 # Use an Alpine-based bun image
-FROM oven/bun:1.2.18-alpine
+FROM oven/bun:1.2.19-alpine
 
 # Set environment variables for the timezone and application
 ENV TZ=America/Chicago \
