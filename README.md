@@ -9,6 +9,7 @@ ASFclaim is a tool designed to automatically claim new free packages on [Steam](
 ### How It Works
 
 1. **GitHub Gist Integration**: The tool retrieves a list of free Steam packages from a specified GitHub Gist (set by the `GIST_ID` environment variable).
+   - To avoid GitHub API rate limits, you can optionally provide a `GITHUB_TOKEN` environment variable with a GitHub Personal Access Token with the gist scope.
 2. **Processed Licenses**: It keeps track of which codes have already been processed to avoid claiming the same package multiple times.
 3. **Claiming Process**: The tool claims free Steam packages by sending commands to ASF (ArchiSteamFarm).
 4. **Interval-based Processing**: The tool processes up to **40 codes per interval** (as defined by `ASF_CLAIM_INTERVAL`, in hours). This ensures that the tool can claim available packages at a steady pace without hitting the Steam API limit.
@@ -155,6 +156,7 @@ services:
 | `ASF_BOTS`                  | List of ASF bot names                        | Comma-separated bot names                              | `asf`                              | No       |
 | `ASF_CLAIM_INTERVAL`        | Hours to wait for execution                  | Interval in hours between checks                       | `3`                                | No       |
 | `GIST_ID`                   | Gist ID containing Steam codes               | GitHub Gist ID for fetching codes                      | `e8c5cf365d816f2640242bf01d8d3675` | No       |
+| `GITHUB_TOKEN`              | GitHub Personal Access Token                 | Token for authenticated GitHub API requests to avoid rate limits | ` `                                | No       |
 | `WEBHOOK_URL`               | Discord Webhook URL                          | URL for Discord webhook or `none` to disable           | `none`                             | No       |
 | `WEBHOOK_ENABLEDTYPES`      | Displayed notification types in Discord chat | Semicolon-separated types (e.g., `error;warn;success`) | `error;warn;success`               | No       |
 | `WEBHOOK_SHOWACCOUNTSTATUS` | Show result from ASF                         | Options: `true` or `false`                             | `true`                             | No       |

@@ -9,6 +9,7 @@ ENV TZ=America/Chicago \
     ASF_COMMAND_PREFIX=! \
     ASF_BOTS=asf \
     ASF_CLAIM_INTERVAL=3 \
+    GITHUB_TOKEN= \
     WEBHOOK_URL=none \
     WEBHOOK_ENABLEDTYPES=error;warn;success \
     WEBHOOK_SHOWACCOUNTSTATUS=true
