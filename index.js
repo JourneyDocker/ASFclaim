@@ -12,22 +12,23 @@ const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
     winston.format.timestamp(),
-    winston.format.errors({ stack: true })
+    winston.format.errors({ stack: true }),
+    winston.format.printf(({ level, message, timestamp }) => {
+      const date = new Date(timestamp).toLocaleDateString('en-US');
+      const time = new Date(timestamp).toLocaleTimeString('en-US', {
+        hour12: true,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      return `[${date}, ${time}] [${level.toUpperCase()}] ${message}`;
+    })
   ),
   transports: [
     new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.printf(({ level, message, timestamp }) => {
-          const time = new Date(timestamp).toLocaleTimeString('en-US', {
-            hour12: true,
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-          });
-          return `${time} ${level}: ${message}`;
-        })
-      )
+      format: winston.format.colorize({ level: true }),
+      handleExceptions: true,
+      handleRejections: true
     })
   ]
 });
