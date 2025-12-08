@@ -13,6 +13,6 @@
   "dependencies": {
     "@octokit/rest": "22.0.1",
     "dotenv": "17.2.3",
-    "winston": "3.18.3"
+    "winston": "3.19.0"
   }
 }
