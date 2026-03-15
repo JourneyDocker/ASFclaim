@@ -1,6 +1,6 @@
 {
   "name": "asfclaim",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Free package claimer for ASF",
   "main": "index.js",
   "type": "module",
