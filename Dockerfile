@@ -1,7 +1,10 @@
-# Use an Alpine-based bun image
-FROM oven/bun:1.3.11-alpine
+# Stage 0: Base
+FROM oven/bun:1.3.11-alpine AS base
 
-# Set environment variables for the timezone and application
+# Set the working directory
+WORKDIR /app
+
+# Set environment variables
 ENV TZ=America/Chicago \
     ASF_PROTOCOL=http \
     ASF_HOST=localhost \
@@ -14,21 +17,33 @@ ENV TZ=America/Chicago \
     WEBHOOK_ENABLEDTYPES=error;warn;success \
     WEBHOOK_SHOWACCOUNTSTATUS=true
 
-# Install dependencies and set up app directory
+# Stage 1: Build
+FROM base AS build
+
+# Copy package definitions
+COPY package.json .
+
+# Install project dependencies
+RUN bun install
+
+# Copy the application source code
+COPY ./index.js .
+
+# Stage 2: Final
+FROM base AS final
+
+# Install runtime system dependencies and set up the application directory
 RUN apk add --no-cache tzdata && \
     mkdir -p /app/storage && \
     chown -R bun:bun /app
 
-# Set working directory and copy package.json for dependency installation
-WORKDIR /app
-COPY package.json ./
+# Copy dependencies and application code from the build stage
+COPY --from=build --chown=bun:bun /app/node_modules ./node_modules
+COPY --from=build --chown=bun:bun /app/package.json .
+COPY --from=build --chown=bun:bun /app/index.js .
 
-# Install dependencies
-RUN bun install
-
-# Copy application source code
-COPY --chown=bun:bun ./index.js ./
-
-# Use non-root user and set default command
+# Switch to a non-root user
 USER bun
+
+# Set the default command
 CMD ["bun", "index.js"]
