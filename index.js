@@ -13,6 +13,12 @@ const logger = winston.createLogger({
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.errors({ stack: true }),
+    winston.format((info) => {
+      if (typeof info.message === 'object' && info.message !== null) {
+        info.message = JSON.stringify(info.message, null, 2);
+      }
+      return info;
+    })(),
     winston.format.printf(({ level, message, timestamp }) => {
       const date = new Date(timestamp).toLocaleDateString('en-US');
       const time = new Date(timestamp).toLocaleTimeString('en-US', {
@@ -260,7 +266,7 @@ async function checkGame() {
                 }
               }
             } else {
-              logger.error("Error: ", body);
+              logger.error("Error: " + JSON.stringify(body));
               await sendHookAsync("error", "Got non-success result from ASF, check the logs for more information.");
               logger.error("Statuscode: " + body.Result.StatusCode + " | Got non-success result from ASF!");
               process.exit(1);
@@ -269,7 +275,7 @@ async function checkGame() {
           .catch(async err => {
             logger.error(`Error running '${asfCommand}':`);
             await sendHookAsync("error", "An error occurred while connecting to ASF, check the logs for more information.");
-            logger.error("error", err);
+            logger.error(err.message || err);
             process.exit(1);
           });
       }
@@ -583,13 +589,13 @@ async function parseAppMetaAsync(appId) {
       } else {
         logger.warn("Warn: ");
         logger.warn(body);
-        await sendHookAsync("warn", "Got none-success result from SteamAPI, check the logs for more informations");
+        await sendHookAsync("warn", "Got none-success result from SteamAPI, check the logs for more information");
       }
     })
     .catch(async err => {
       logger.warn("An error occurred while reading metadata from appId: " + appId);
       logger.warn(err);
-      await sendHookAsync("warn", "An error occurred while connect to Steam API, check the logs for more informations.");
+      await sendHookAsync("warn", "An error occurred while connect to Steam API, check the logs for more information.");
     })
 }
 
@@ -612,14 +618,14 @@ async function parseSubApps(subId) {
       } else {
         logger.warn("Warn: ");
         logger.warn(body);
-        await sendHookAsync("warn", "Got none-success result from SteamAPI, check the logs for more informations");
+        await sendHookAsync("warn", "Got none-success result from SteamAPI, check the logs for more information");
         return [];
       }
     })
     .catch(async err => {
       logger.warn("An error occurred while reading metadata from subId: " + subId);
       logger.warn(err);
-      await sendHookAsync("warn", "An error occurred while connect to Steam API, check the logs for more informations.");
+      await sendHookAsync("warn", "An error occurred while connect to Steam API, check the logs for more information.");
     })
 
   const appMetadataResults = [];
