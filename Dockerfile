@@ -1,5 +1,5 @@
 # Stage 0: Base
-FROM oven/bun:1.3.13-alpine AS base
+FROM oven/bun:1.3.14-alpine AS base
 
 # Set the working directory
 WORKDIR /app
